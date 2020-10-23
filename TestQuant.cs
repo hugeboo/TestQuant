@@ -29,13 +29,13 @@ namespace QuantasBasket.Quantas.TestQuant
         {
             try
             {
-                var dsec = JsonConvert.DeserializeAnonymousType(Properties.Settings.Default.Securitis, new[] { new { c = "", s = "" } });
+                var dsec = JsonConvert.DeserializeAnonymousType(Properties.Settings.Default.Securities, new[] { new { c = "", s = "" } });
                 _name = "TestQuant: " + string.Join(",", dsec.Select(d => d.s));
                 _securities = dsec.Select(d => new SecurityId { ClassCode = d.c, SecurityCode = d.s }).ToHashSet();
             }
             catch(Exception ex)
             {
-                _logger.Error(ex, $"Cannot initialize. Securites = {Properties.Settings.Default.Securitis}");
+                _logger.Error(ex, $"Cannot initialize. Securites = {Properties.Settings.Default.Securities}");
                 throw;
             }
         }
@@ -50,7 +50,6 @@ namespace QuantasBasket.Quantas.TestQuant
         {
             try
             {
-                _logger.Trace($"Received message: {message}");
                 switch (message)
                 {
                     case ErrorMessage em:
@@ -62,6 +61,12 @@ namespace QuantasBasket.Quantas.TestQuant
                     case TimerMessage tm:
                         _logger.Debug("tm");
                         break;
+                    case StartMessage sm:
+                        _logger.Debug("sm");
+                        break;
+                    case StopMessage stm:
+                        _logger.Debug("stm");
+                        break;
                     case null:
                         throw new NullReferenceException("message");
                 }
@@ -70,6 +75,11 @@ namespace QuantasBasket.Quantas.TestQuant
             {
                 _logger.Error(ex, $"Cannot process message {message}");
             }
+        }
+
+        public void Dispose()
+        {
+            _logger.Debug($"{_name} disposing");
         }
     }
 }

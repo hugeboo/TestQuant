@@ -25,10 +25,10 @@ namespace QuantasBasket.Quantas.TestQuant.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("[{\"c\":\"TQBR\",\"s\":\"LKOH\"},{\"c\":\"*\",\"s\":\"GAZP\"}]")]
-        public string Securitis {
+        [global::System.Configuration.DefaultSettingValueAttribute("[{\"c\":\"TQBR\",\"s\":\"LKOH\"},{\"c\":\"TQBR\",\"s\":\"GAZP\"}]")]
+        public string Securities {
             get {
-                return ((string)(this["Securitis"]));
+                return ((string)(this["Securities"]));
             }
         }
     }
