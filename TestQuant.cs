@@ -1,5 +1,8 @@
-﻿using QuantaBasket.Core.Contracts;
+﻿using Newtonsoft.Json;
+using NLog;
+using QuantaBasket.Core.Contracts;
 using QuantaBasket.Core.Interfaces;
+using QuantaBasket.Core.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +13,63 @@ namespace QuantasBasket.Quantas.TestQuant
 {
     public sealed class TestQuant : IQuant
     {
-        public string Name => throw new NotImplementedException();
+        private readonly string _name;
+        private readonly HashSet<SecurityId> _securities;
 
-        public HashSet<SecurityId> Securities => throw new NotImplementedException();
+        private IBasketService _basketService;
+        private readonly ILogger _logger = LogManager.GetLogger("TestQuant");
 
-        public IBasketService BasketService { set => throw new NotImplementedException(); }
+        public string Name => _name;
+
+        public HashSet<SecurityId> Securities => _securities;
+
+        public IBasketService BasketService { set => _basketService = value ?? throw new ArgumentNullException("BasketService"); }
+
+        public TestQuant()
+        {
+            try
+            {
+                var dsec = JsonConvert.DeserializeAnonymousType(Properties.Settings.Default.Securitis, new[] { new { c = "", s = "" } });
+                _name = "TestQuant: " + string.Join(",", dsec.Select(d => d.s));
+                _securities = dsec.Select(d => new SecurityId { ClassCode = d.c, SecurityCode = d.s }).ToHashSet();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex, $"Cannot initialize. Securites = {Properties.Settings.Default.Securitis}");
+                throw;
+            }
+        }
+
+        public void Init()
+        {
+            _logger.Info($"Initialize quant: {_name}");
+            _basketService.RegisterMessageProcessor(MessageProcessor);
+        }
+
+        private void MessageProcessor(AMessage message)
+        {
+            try
+            {
+                _logger.Trace($"Received message: {message}");
+                switch (message)
+                {
+                    case ErrorMessage em:
+                        _logger.Debug("em");
+                        break;
+                    case L1QuotationsMessage qm:
+                        _logger.Debug("qm");
+                        break;
+                    case TimerMessage tm:
+                        _logger.Debug("tm");
+                        break;
+                    case null:
+                        throw new NullReferenceException("message");
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex, $"Cannot process message {message}");
+            }
+        }
     }
 }
