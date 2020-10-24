@@ -19,11 +19,14 @@ namespace QuantasBasket.Quantas.TestQuant
         private IBasketService _basketService;
         private readonly ILogger _logger = LogManager.GetLogger("TestQuant");
 
+        private QuantStatus _status = QuantStatus.Idle;
+
         public string Name => _name;
 
         public HashSet<SecurityId> Securities => _securities;
 
         public IBasketService BasketService { set => _basketService = value ?? throw new ArgumentNullException("BasketService"); }
+        public QuantStatus Status => _status;
 
         public TestQuant()
         {
@@ -60,12 +63,22 @@ namespace QuantasBasket.Quantas.TestQuant
                         break;
                     case TimerMessage tm:
                         _logger.Debug("tm");
+                        //var s = _basketService.CreateSignal();
+                        //s.ClassCode = "TQBR";
+                        //s.SecCode = "LKOH";
+                        //s.Side = SignalSide.Buy;
+                        //s.Qtty = 10;
+                        //s.Price = 3999.0m;
+                        //s.PriceType = PriceType.Limit;
+                        //_basketService.SendSignal(s);
                         break;
                     case StartMessage sm:
                         _logger.Debug("sm");
+                        _status = QuantStatus.Active;
                         break;
                     case StopMessage stm:
                         _logger.Debug("stm");
+                        _status = QuantStatus.Idle;
                         break;
                     case null:
                         throw new NullReferenceException("message");

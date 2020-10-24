@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Securities" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">[{"c":"TQBR","s":"LKOH"},{"c":"TQBR","s":"GAZP"}]</Value>
+      <Value Profile="(Default)">[{"c":"TQBR","s":"LKOH"},{"c":"SPBFUT","s":"RIZ0"}]</Value>
     </Setting>
   </Settings>
 </SettingsFile>
