@@ -19,7 +19,7 @@ namespace QuantasBasket.Quantas.TestQuant
         private IBasketService _basketService;
         private readonly ILogger _logger = LogManager.GetLogger("TestQuant");
 
-        private QuantStatus _status = QuantStatus.Idle;
+        private QuantStatus _status = Properties.Settings.Default.Enabled ? QuantStatus.Idle : QuantStatus.Disabled;
 
         public string Name => _name;
 
@@ -51,13 +51,11 @@ namespace QuantasBasket.Quantas.TestQuant
 
         private void MessageProcessor(AMessage message)
         {
+            if (Status == QuantStatus.Disabled) return;
             try
             {
                 switch (message)
                 {
-                    case ErrorMessage em:
-                        _logger.Debug("em");
-                        break;
                     case L1QuotationsMessage qm:
                         _logger.Debug("qm");
                         break;
