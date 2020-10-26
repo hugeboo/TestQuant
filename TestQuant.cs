@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace QuantasBasket.Quantas.TestQuant
 {
-    public sealed class TestQuant : IQuant
+    public sealed class TestQuant : IQuant, IHaveConfiguration
     {
         private readonly string _name;
         private readonly HashSet<SecurityId> _securities;
@@ -19,26 +19,29 @@ namespace QuantasBasket.Quantas.TestQuant
         private IBasketService _basketService;
         private readonly ILogger _logger = LogManager.GetLogger("TestQuant");
 
-        private QuantStatus _status = Properties.Settings.Default.Enabled ? QuantStatus.Idle : QuantStatus.Disabled;
+        private QuantStatus _status = Configuration.Default.Enabled ? QuantStatus.Idle : QuantStatus.Disabled;
 
         public string Name => _name;
 
         public HashSet<SecurityId> Securities => _securities;
 
         public IBasketService BasketService { set => _basketService = value ?? throw new ArgumentNullException("BasketService"); }
+
         public QuantStatus Status => _status;
+
+        public bool IsActive => _status == QuantStatus.Active;
 
         public TestQuant()
         {
             try
             {
-                var dsec = JsonConvert.DeserializeAnonymousType(Properties.Settings.Default.Securities, new[] { new { c = "", s = "" } });
+                var dsec = JsonConvert.DeserializeAnonymousType(Configuration.Default.Securities, new[] { new { c = "", s = "" } });
                 _name = "TestQuant: " + string.Join(",", dsec.Select(d => d.s));
                 _securities = dsec.Select(d => new SecurityId { ClassCode = d.c, SecurityCode = d.s }).ToHashSet();
             }
             catch(Exception ex)
             {
-                _logger.Error(ex, $"Cannot initialize. Securites = {Properties.Settings.Default.Securities}");
+                _logger.Error(ex, $"Cannot initialize. Securites = {Configuration.Default.Securities}");
                 throw;
             }
         }
@@ -57,10 +60,10 @@ namespace QuantasBasket.Quantas.TestQuant
                 switch (message)
                 {
                     case L1QuotationsMessage qm:
-                        _logger.Debug("qm");
+                        if (IsActive) _logger.Debug("qm");
                         break;
                     case TimerMessage tm:
-                        _logger.Debug("tm");
+                        if (IsActive) _logger.Debug("tm");
                         //var s = _basketService.CreateSignal();
                         //s.ClassCode = "TQBR";
                         //s.SecCode = "LKOH";
@@ -91,6 +94,16 @@ namespace QuantasBasket.Quantas.TestQuant
         public void Dispose()
         {
             _logger.Debug($"{_name} disposing");
+        }
+
+        public object GetConfiguration()
+        {
+            return Configuration.Default;
+        }
+
+        public void SaveConfiguration()
+        {
+            Configuration.Default.Save();
         }
     }
 }
