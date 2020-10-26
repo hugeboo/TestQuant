@@ -6,6 +6,7 @@ using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,11 +31,13 @@ namespace QuantasBasket.Quantas.TestQuant
                     {
                         if (defaultInstance == null)
                         {
+                            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var filename = Path.Combine(dir, FileName);
 #if DEBUG
                             var json0 = JsonConvert.SerializeObject(new Configuration(), Formatting.Indented);
-                            File.WriteAllText(FileName, json0);
+                            File.WriteAllText(filename, json0);
 #endif
-                            var json = File.ReadAllText(FileName);
+                            var json = File.ReadAllText(filename);
                             defaultInstance = JsonConvert.DeserializeObject<Configuration>(json);
                         }
                     }
