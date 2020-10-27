@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuantaBasket.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,48 +13,9 @@ using System.Threading.Tasks;
 
 namespace QuantasBasket.Quantas.TestQuant
 {
-    public sealed class Configuration
+    [Configuration("TestQuant.dll.json")]
+    public sealed class Configuration : ConfigurationSingleton<Configuration>
     {
-        private const string FileName = "TestQuant.dll.json";
-
-        #region Singleton
-
-        private static Configuration defaultInstance;
-        private static object _syncObj = new object();
-
-        public static Configuration Default
-        {
-            get
-            {
-                if (defaultInstance == null)
-                {
-                    lock (_syncObj)
-                    {
-                        if (defaultInstance == null)
-                        {
-                            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                            var filename = Path.Combine(dir, FileName);
-#if DEBUG
-                            var json0 = JsonConvert.SerializeObject(new Configuration(), Formatting.Indented);
-                            File.WriteAllText(filename, json0);
-#endif
-                            var json = File.ReadAllText(filename);
-                            defaultInstance = JsonConvert.DeserializeObject<Configuration>(json);
-                        }
-                    }
-                }
-                return defaultInstance;
-            }
-        }
-
-        public void Save()
-        {
-            var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(FileName, json);
-        }
-
-        #endregion
-
         [Category("Basic")]
         [DefaultValue(true)]
         public bool Enabled { get; set; } = true;

@@ -19,7 +19,7 @@ namespace QuantasBasket.Quantas.TestQuant
         private IBasketService _basketService;
         private readonly ILogger _logger = LogManager.GetLogger("TestQuant");
 
-        private QuantStatus _status = Configuration.Default.Enabled ? QuantStatus.Idle : QuantStatus.Disabled;
+        private QuantStatus _status = Configuration.Instance.Enabled ? QuantStatus.Idle : QuantStatus.Disabled;
 
         public string Name => _name;
 
@@ -35,13 +35,13 @@ namespace QuantasBasket.Quantas.TestQuant
         {
             try
             {
-                var dsec = JsonConvert.DeserializeAnonymousType(Configuration.Default.Securities, new[] { new { c = "", s = "" } });
+                var dsec = JsonConvert.DeserializeAnonymousType(Configuration.Instance.Securities, new[] { new { c = "", s = "" } });
                 _name = "TestQuant: " + string.Join(",", dsec.Select(d => d.s));
                 _securities = dsec.Select(d => new SecurityId { ClassCode = d.c, SecurityCode = d.s }).ToHashSet();
             }
             catch(Exception ex)
             {
-                _logger.Error(ex, $"Cannot initialize. Securites = {Configuration.Default.Securities}");
+                _logger.Error(ex, $"Cannot initialize. Securites = {Configuration.Instance.Securities}");
                 throw;
             }
         }
@@ -98,12 +98,12 @@ namespace QuantasBasket.Quantas.TestQuant
 
         public object GetConfiguration()
         {
-            return Configuration.Default;
+            return Configuration.Instance;
         }
 
         public void SaveConfiguration()
         {
-            Configuration.Default.Save();
+            Configuration.Instance.Save();
         }
     }
 }
