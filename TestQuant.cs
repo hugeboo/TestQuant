@@ -66,8 +66,8 @@ namespace QuantasBasket.Quantas.TestQuant
                         {
                             if (q.Security.SecurityCode == "RIZ0" && q.DVolume!=0L)
                             {
-                                _sma1?.Add(q.Last);
-                                _sma2?.Add(q.Last);
+                                _sma1?.Add(new TimePoint(q.DateTime, q.Last));
+                                _sma2?.Add(new TimePoint(q.DateTime, q.Last));
                             }
                         }
                     }
@@ -97,16 +97,16 @@ namespace QuantasBasket.Quantas.TestQuant
                         _status = QuantStatus.Active;
                         _writer1 = new StreamWriter("sma1.csv");
                         _writer2 = new StreamWriter("sma2.csv");
-                        _sma1 = new SMA(28, (d) => 
+                        _sma1 = new SMA(28);
+                        _sma1.RegisterCallback((d) => 
                         {
-                            var pt = new TimePoint(DateTime.Now, d);
-                            _writer1.WriteLine(pt.ToString());
+                            _writer1.WriteLine(d.ToString());
                             _writer1.Flush();
                         });
-                        _sma2 = new SMA(14, (d) =>
+                        _sma2 = new SMA(14);
+                        _sma2.RegisterCallback((d) =>
                         {
-                            var pt = new TimePoint(DateTime.Now, d);
-                            _writer2.WriteLine(pt.ToString());
+                            _writer2.WriteLine(d.ToString());
                             _writer2.Flush();
                         });
                     }
