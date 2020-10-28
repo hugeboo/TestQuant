@@ -52,7 +52,10 @@ namespace QuantasBasket.Quantas.TestQuant
             _basketService.RegisterCallback(MessageProcessor);
         }
 
-        private bool sent;
+        //private bool sent;
+        //private string signalId;
+        //private bool canceled;
+
         private void MessageProcessor(AMessage message)
         {
             if (Status == QuantStatus.Disabled) return;
@@ -73,22 +76,28 @@ namespace QuantasBasket.Quantas.TestQuant
                     }
                     break;
                 case SignalChangedMessage scm:
-                    _logger.Debug("scm");
+                    _logger.Debug($"scm: {scm}");
                     break;
                 case TimerMessage tm:
                     if (IsActive) _logger.Debug("tm");
-                    if (!sent)
-                    {
-                        sent = true;
-                        var s = _basketService.CreateSignal();
-                        s.ClassCode = "TQBR";
-                        s.SecCode = "LKOH";
-                        s.Side = SignalSide.Buy;
-                        s.Qtty = 10;
-                        s.Price = 3999.0m;
-                        s.PriceType = PriceType.Limit;
-                        _basketService.SendSignal(s);
-                    }
+                    //if (!sent)
+                    //{
+                    //    sent = true;
+                    //    var s = _basketService.CreateSignal();
+                    //    signalId = s.Id;
+                    //    s.ClassCode = "TQBR";
+                    //    s.SecCode = "GAZP";
+                    //    s.Side = SignalSide.Buy;
+                    //    s.Qtty = 10;
+                    //    s.Price = 3999.0m;
+                    //    s.PriceType = PriceType.Limit;
+                    //    _basketService.SendSignal(s);
+                    //}
+                    //else if (!canceled)
+                    //{
+                    //    canceled = true;
+                    //    _basketService.CancelSignal(signalId);
+                    //}
                     break;
                 case StartMessage sm:
                     _logger.Debug("sm");
