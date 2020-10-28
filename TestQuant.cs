@@ -49,7 +49,7 @@ namespace QuantasBasket.Quantas.TestQuant
         {
             _logger.Info($"Initialize quant: {_name}");
             _basketService = basketService;
-            _basketService.RegisterMessageProcessor(MessageProcessor);
+            _basketService.RegisterCallback(MessageProcessor);
         }
 
         private bool sent;
