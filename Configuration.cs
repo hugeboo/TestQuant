@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using QuantaBasket.Core.Quant;
 using QuantaBasket.Core.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,8 @@ using System.Threading.Tasks;
 namespace QuantasBasket.Quantas.TestQuant
 {
     [Configuration("TestQuant.dll.json")]
-    public sealed class Configuration : ConfigurationSingleton<Configuration>
+    public sealed class Configuration : AQuantConfigurationSingleton<Configuration>
     {
-        [Category("Basic")]
-        [DefaultValue(true)]
-        public bool Enabled { get; set; } = true;
-
-        [Category("Basic")]
-        [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string Securities { get; set; } = "[{\"c\":\"TQBR\",\"s\":\"LKOH\"},{\"c\":\"SPBFUT\",\"s\":\"RIZ0\"}]";
-
-        [Category("Instance")]
-        [JsonIgnore]
-        public string InstanceType => "TestQuant";
+        public override string InstanceType => "TestQuant";
     }
 }
