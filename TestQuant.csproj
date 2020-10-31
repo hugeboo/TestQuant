@@ -66,8 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TestQuant.dll.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Config\TestQuant.dll.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
